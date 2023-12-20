@@ -18,8 +18,7 @@ I used the prompt, and the following answers are wrong, and do not match the gro
 ## Previous attempts to get higher accuracy
 Use the following log of changes per prompt re-write (attempt to get higher accuracy) to guide your next move.
 
-If the accuracy drops, you MUST revert to the previous prompt.
-
+If the accuracy drops, you MUST revert to the previous prompt and try a different idea.
 
 {previous_attempts}
 

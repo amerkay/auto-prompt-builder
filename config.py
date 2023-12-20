@@ -16,16 +16,17 @@ IMPORTANT: The score MUST ONLY take the writing style into consideration, not th
 # Database Path for LangChain cache
 DATABASE_PATH = ".langchain.db"
 
-# Model configurations
-# MODEL_GPT4_NAME = "gpt-4-1106-preview"
-# MODEL_GPT35_NAME = "gpt-3.5-turbo"
-# MODEL_TEMPERATURE = 0.5
-# MODEL_MAX_TOKENS_GPT4 = 2000
-# MODEL_MAX_TOKENS_GPT35 = 750
-
 # Directory for temporary files
 TMP_DIR = "_tmp"
 
 # Prompt file paths
 PROMPT_INIT_FILE = "./prompts/PROMPT_WRITEP_ZERO_SHOT.json"
 PROMPT_UPDATE_FILE = "./prompts/PROMPT_UPDATEP.json"
+
+
+# Model configurations
+# MODEL_GPT4_NAME = "gpt-4-1106-preview"
+# MODEL_GPT35_NAME = "gpt-3.5-turbo"
+# MODEL_TEMPERATURE = 0.5
+# MODEL_MAX_TOKENS_GPT4 = 2000
+# MODEL_MAX_TOKENS_GPT35 = 750
