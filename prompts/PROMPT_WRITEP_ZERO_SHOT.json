@@ -1,0 +1,8 @@
+{
+    "_type": "prompt",
+    "input_variables": [
+        "dataset_table",
+        "idea_seed"
+    ],
+    "template_path": "prompts/PROMPT_WRITEP_ZERO_SHOT.txt"
+}

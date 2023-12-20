@@ -1,0 +1,11 @@
+Example No.,Input Text,OUTPUT: Sentiment
+1,I love this new phone,positive
+2,This is just okay. Nothing special. 😐,neutral
+3,"Unfortunately, it broke the first day I used it",negative
+4,I guess it could've been worse 😅,negative
+5,Waiting forever for a response... 😒,negative
+6,The movie was both amazing and boring 😕,unsure
+7,Not sure if I liked it or not,unsure
+8,Absolutely fantastic experience!,positive
+9,"It's just average, nothing more or less. 🤷‍♂️",neutral
+10,Hard to tell if it's good or bad 😶,unsure

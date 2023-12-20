@@ -1,0 +1,7 @@
+{
+    "_type": "prompt",
+    "input_variables": [
+        "dataset_table"
+    ],
+    "template_path": "prompts/PROMPT_WRITEP_FEW_SHOT.txt"
+}
