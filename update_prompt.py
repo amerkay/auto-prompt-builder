@@ -4,29 +4,33 @@ from utils import (
     extract_changes_made_from_answer,
 )
 from utils_multiline_table import df_to_multiline_table
-from config import IDEA_SEED, ROWS_INCORRECT, PROMPT_UPDATE_FILE
-
-from langchain.prompts import load_prompt
 from langchain.schema.output_parser import StrOutputParser
 
 
 def invoke_update_prompt(
-    df_generated, prompt_previous, model, previous_attempts_str, i_prompt
+    prompt_template,
+    df_generated,
+    prompt_previous,
+    model,
+    previous_attempts_str,
+    i_prompt,
+    max_rows_incorrect,
+    idea_seed
 ):
     # Get the incorrect answers from the generated data
-    df_incorrect = get_incorrect_answers(df_generated)
+    df_incorrect = get_incorrect_answers(df_generated, max_rows_incorrect)
 
     # Load the prompt to update the generated prompt
-    prompt_updatep = load_prompt(PROMPT_UPDATE_FILE)
-    chain_updatep = prompt_updatep | model | StrOutputParser()
+    # prompt_updatep = load_prompt(PROMPT_UPDATE_FILE)
+    chain_updatep = prompt_template | model | StrOutputParser()
 
     # Invoke the LangChain chain to update the prompt
     print("Updating prompt using gpt-4-turbo...")
-    prompt_updatep_str = prompt_updatep.format(
+    prompt_updatep_str = prompt_template.format(
         current_prompt=prompt_previous,
         incorrect_answers_table=df_to_multiline_table(df_incorrect),
         previous_attempts=previous_attempts_str,
-        idea_seed=IDEA_SEED,
+        idea_seed=idea_seed,
     )
     # print("\n\n\n>> prompt_updatep is")
     # print(prompt_updatep_str, "\n\n")
@@ -37,7 +41,7 @@ def invoke_update_prompt(
             "current_prompt": prompt_previous,
             "incorrect_answers_table": df_to_multiline_table(df_incorrect),
             "previous_attempts": previous_attempts_str,
-            "idea_seed": IDEA_SEED,
+            "idea_seed": idea_seed,
         }
     )
     save_tmp_file(f"05-prompt_updatep-{i_prompt}-response.md", answer_updatep)
@@ -58,16 +62,17 @@ def invoke_update_prompt(
     return prompt_updated_str, changes_made_str
 
 
-def get_incorrect_answers(df_generated):
+def get_incorrect_answers(df_generated, max_rows):
     # Filter df_generated to only include incorrect answers
     df_incorrect = df_generated[~df_generated["Is Correct?"]].reset_index(drop=True)
 
     print(f"Incorrect answers count: {len(df_incorrect)}")
     # print(df_to_multiline_table(df_incorrect), "\n")
 
-    print(f"Pick the first {int(ROWS_INCORRECT)} examples...")
-    df_incorrect = df_incorrect.head(ROWS_INCORRECT)
-    # df_incorrect = df_incorrect.sample(ROWS_INCORRECT).reset_index(drop=True)
+    print(f"Pick the first {max_rows} examples...")
+    df_incorrect = df_incorrect.head(max_rows)
+
+    # df_incorrect = df_incorrect.sample(max_rows).reset_index(drop=True)
     # print(df_to_multiline_table(df_incorrect), "\n")
 
     return df_incorrect

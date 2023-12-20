@@ -1,6 +1,5 @@
 from utils import save_tmp_file
 from utils_multiline_table import df_to_multiline_table, parse_multiline_table
-from config import ROWS_MAX
 from data_handling import chunk_dataframe
 
 import pandas as pd
@@ -44,12 +43,12 @@ def calculate_accuracy(df_original, df_generated, output_column_name):
     return accuracy, df_generated
 
 
-def invoke_test_prompt_against_dataset(prompt_template, df, model, i_prompt):
+def invoke_test_prompt_against_dataset(prompt_template, df, model, i_prompt, max_chunk_rows):
     # Set up the LangChain chain to use the generated prompt
     chain35 = prompt_template | model | StrOutputParser()
 
     # Split the dataset into chunks
-    df_chunks = chunk_dataframe(df, ROWS_MAX)
+    df_chunks = chunk_dataframe(df, max_chunk_rows)
 
     # List to store results from each chunk
     chunk_results = []
