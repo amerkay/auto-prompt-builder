@@ -69,10 +69,12 @@ def get_incorrect_answers(df_generated, max_rows):
     print(f"Incorrect answers count: {len(df_incorrect)}")
     # print(df_to_multiline_table(df_incorrect), "\n")
 
-    print(f"Pick the first {max_rows} examples...")
-    df_incorrect = df_incorrect.head(max_rows)
+    # print(f"Pick the first {max_rows} examples...")
+    # df_incorrect = df_incorrect.head(max_rows)
 
-    # df_incorrect = df_incorrect.sample(max_rows).reset_index(drop=True)
+    print(f"Pick {max_rows} random incorrect examples...")
+    df_incorrect = df_incorrect.sample(max_rows).reset_index(drop=True)
+
     # print(df_to_multiline_table(df_incorrect), "\n")
 
     return df_incorrect

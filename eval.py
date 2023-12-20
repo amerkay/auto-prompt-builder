@@ -3,6 +3,8 @@ from utils_multiline_table import df_to_multiline_table, parse_multiline_table
 from data_handling import chunk_dataframe
 
 import pandas as pd
+import concurrent.futures
+
 from langchain.schema.output_parser import StrOutputParser
 
 
@@ -50,34 +52,8 @@ def invoke_test_prompt_against_dataset(prompt_template, df, model, i_prompt, max
     # Split the dataset into chunks
     df_chunks = chunk_dataframe(df, max_chunk_rows)
 
-    # List to store results from each chunk
-    chunk_results = []
-
-    j = 1
-
-    # Iterate through each chunk and invoke the LangChain chain
-    for chunk in df_chunks:
-        # Process the chunk
-        df_generated_chunk = None
-        try:
-            df_generated_chunk = process_chunk(
-                prompt_template, i_prompt, chain35, j, chunk
-            )
-        except Exception as e:
-            # try one more time
-            print("Trying one more time...", e)
-            df_generated_chunk = process_chunk(
-                prompt_template, i_prompt, chain35, j, chunk, retry=1
-            )
-
-        # Add the processed chunk to the results list
-        chunk_results.append(df_generated_chunk)
-        # Increment the prompt counter
-        j = j + 1
-
-    # Now you can aggregate or process 'chunk_results' as needed
-    # For example, to concatenate all chunks into a single DataFrame:
-    df_generated = pd.concat(chunk_results, ignore_index=True)
+    # Call the new function
+    df_generated = process_chunks_and_aggregate(df_chunks, prompt_template, i_prompt, chain35)
 
     # Add columns with `input` in their name from df to df_generated
     for column in df.columns:
@@ -98,8 +74,46 @@ def invoke_test_prompt_against_dataset(prompt_template, df, model, i_prompt, max
     return df_generated, accuracy
 
 
+def process_chunks_and_aggregate(df_chunks, prompt_template, i_prompt, chain):
+    # Initialize an ordered dictionary to store results from each chunk
+    chunk_list = []
+
+    # Define the number of workers to use (maximum of 3)
+    num_workers = min(len(df_chunks), 3)
+
+    # Use a ThreadPoolExecutor to execute multiple chunks concurrently
+    with concurrent.futures.ThreadPoolExecutor(max_workers=num_workers) as executor:
+        futures = {
+            executor.submit(process_chunk_with_retry, prompt_template, i_prompt, chain, j, chunk):
+                j for j, chunk in enumerate(df_chunks, start=1)
+        }
+
+        # Get the results from the completed Future instances
+        for future in concurrent.futures.as_completed(futures):
+            try:
+                chunk_list.append(future.result())
+            except Exception as exc:
+                print(f"Processing chunk failed with exception: {exc}")
+
+    # Concatenate the results from each chunk into a single DataFrame and sort
+    df_generated = pd.concat(chunk_list)
+    df_generated = df_generated.sort_values(by=["ROW_NO"]).reset_index(drop=True)
+
+    return df_generated
+
+
+def process_chunk_with_retry(prompt_template, i_prompt, chain, j, chunk, retries=2):
+    for retry in range(retries):
+        try:
+            return process_chunk(prompt_template, i_prompt, chain, j, chunk, retry=retry)
+        except Exception as e:
+            print("Retrying...", e)
+
+    raise ValueError(f"Failed to process chunk {j} after {retries} retries")
+
+
 def process_chunk(prompt_template, i_prompt, chain35, j, chunk, retry=0):
-    print(f"Getting answer, chunk of {len(chunk)} rows...")
+    print(f"Getting chunk {j} with {len(chunk)} rows...")
     save_tmp_file(
         f"03-prompt-{i_prompt}-chunk-{j}-request.md",
         prompt_template.format(
