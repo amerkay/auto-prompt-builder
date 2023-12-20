@@ -97,6 +97,10 @@ def previous_attempts_to_str(previous_attempts, df_all):
         count_wrong = len(df_all) - int(len(df_all) * a["accuracy"] / 100)
         result += f"### Attempt {a['i_prompt']}: {a['accuracy']:.2f}% accuracy"
         result += f" ({count_wrong} wrong out of {len(df_all)} test rows)\n"
-        result += f"Changes made:\n{a['changes_made']}\n\n"
+
+        if a['i_prompt'] > 1:
+            result += "Changes made:\n"
+
+        result += f"{a['changes_made']}\n\n"
 
     return result
