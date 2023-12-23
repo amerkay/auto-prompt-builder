@@ -1,0 +1,8 @@
+{
+    "_type": "prompt",
+    "input_variables": [
+        "TEXT_1",
+        "TEXT_2"
+    ],
+    "template_path": "PROMPT_EVAL_WRITING_STYLE.txt"
+}

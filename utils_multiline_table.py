@@ -16,7 +16,7 @@ def df_to_multiline_table(df, is_remove_output_field=False):
     """
     result = ""
     for index, row in df.iterrows():
-        result += "___START_OF_ROW___\n"
+        result += "\n___START_OF_ROW___\n"
         if "ROW_NO" not in df.columns:
             result += "`ROW_NO`: " + str(index) + "\n"
         for column in df.columns:
@@ -26,7 +26,7 @@ def df_to_multiline_table(df, is_remove_output_field=False):
 
             result += "`" + column + "`: \n"
             result += str(row[column]) + "\n"
-        result += "___END_OF_ROW___\n\n"
+        result += "___END_OF_ROW___\n"
     return result
 
 
@@ -51,7 +51,7 @@ def parse_multiline_table(response_str, expected_count=None):
     if expected_count is not None and len(rows) != expected_count:
         error_message = (
             "Number of rows does not match the expected count. "
-            "Expected {expected_count} rows, got {len(rows)}."
+            f"Expected {expected_count} rows, got {len(rows)}."
         )
         raise ValueError(error_message)
 

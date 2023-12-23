@@ -1,18 +1,16 @@
-from langchain.prompts import load_prompt
 from langchain.schema.output_parser import StrOutputParser
 
 from utils import save_tmp_file, extract_prompt_from_answer
 from utils_multiline_table import df_to_multiline_table
 
 
-def invoke_generate_prompt_initial(model, prompt_init_file, df_sample, idea_seed):
-    # Load the WRITEP prompt and set up the LangChain chain
-    prompt_init = load_prompt(prompt_init_file)
-    chain = prompt_init | model | StrOutputParser()
+def invoke_generate_prompt_initial(model, prompt_init_template, df_sample, idea_seed):
+    # Set up the LangChain chain
+    chain = prompt_init_template | model | StrOutputParser()
 
     save_tmp_file(
         "01-prompt_init.md",
-        prompt_init.format(
+        prompt_init_template.format_messages(
             dataset_table=df_to_multiline_table(df_sample), idea_seed=idea_seed
         ),
     )

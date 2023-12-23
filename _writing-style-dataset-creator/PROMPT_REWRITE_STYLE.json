@@ -1,0 +1,7 @@
+{
+    "_type": "prompt",
+    "input_variables": [
+        "article_section"
+    ],
+    "template_path": "PROMPT_REWRITE_STYLE.txt"
+}

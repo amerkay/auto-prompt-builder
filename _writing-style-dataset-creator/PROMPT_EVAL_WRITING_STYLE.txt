@@ -1,0 +1,79 @@
+Analyze the two texts TEXT_1 and TEXT_2, focusing on detailed lexical choices and syntactic structures. Incorporate stylistic device analysis, such as metaphors, similes, and alliteration. Evaluate the likelihood of the same authorship from 1 to 10, based on similarities in word usage, sentence construction, and stylistic elements. Rate the probability of the same authorship on a scale from 1 to 10, where 1 signifies a low likelihood and 10 indicates a very high likelihood.
+
+---
+---
+---
+
+## The texts to compare
+
+### TEXT_1:
+
+```md
+{TEXT_1}
+```
+
+---
+---
+---
+
+### TEXT_2:
+
+```md
+{TEXT_2}
+```
+
+---
+---
+---
+
+
+## TASK 
+
+Compare `TEXT_1` and `TEXT_2` according to the following metrics:
+
+1. **Stylistic Consistency and Variation**:
+    - Consistency in stylistic choices across the text.
+    - Variations in style within different parts of the text.
+
+2. **Syntax and Sentence Structure**:
+   - Sentence length and complexity.
+   - Use of simple, compound, complex, or compound-complex sentences.
+   - Presence of parallel structures or unique syntactic constructions.
+
+3. **Narrative Voice and Perspective**:
+   - First-person, second-person, or third-person narrative styles.
+   - Consistency and distinctiveness in the narrator's voice.
+   - Use of direct or indirect speech.
+
+4. **Rhetorical Devices and Figures of Speech**:
+   - Use of metaphors, similes, personification, and other figures of speech.
+   - Rhetorical techniques like anaphora, epistrophe, and hyperbole.
+   - Irony, sarcasm, and other forms of rhetorical emphasis.
+
+5. **Sound Patterns**:
+   - Alliteration, assonance, and consonance.
+   - Rhythm and meter in prose or poetry.
+   - Rhyme schemes and sound repetition.
+
+6. **Punctuation and Formatting**:
+   - Unique or characteristic uses of punctuation.
+   - Paragraph structure and division.
+   - Text formatting elements (italics, bold, etc.).
+
+7. **Dialogue Style**:
+   - Dialogue presentation and structure.
+   - Characterization through dialogue.
+   - Use of dialects, accents, or speech idiosyncrasies.
+
+8. **Tone and Mood**:
+   - Overall tone (formal, informal, humorous, serious, etc.).
+   - Creation of mood (suspenseful, melancholic, joyful, etc.).
+   - Emotional resonance in the writing.
+
+9. **Pragmatic Elements**:
+   - Intended audience and purpose.
+   - Contextual usage of language.
+   - Implicit vs. explicit messaging.
+
+
+Take a deep breath. Reply with ONLY: one sentence explaining your reasoning, followed by your final score from 1 to 10, formatted as follows on a new line: `SCORE: [the score]`, for example `SCORE: 6`.

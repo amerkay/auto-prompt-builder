@@ -14,6 +14,8 @@ Your task is to write a prompt that takes in the `INPUT` field(s) from the examp
 
 ## Example `DATASET_SAMPLES`:
 
+___START_OF_DATASET_SAMPLES_TABLE___
+
 ___START_OF_ROW___
 `ROW_NO`: 1
 `INPUT: Value Proposition`:
@@ -54,6 +56,8 @@ Buy organic face cream online
 Transactional
 ___END_OF_ROW___
 
+___END_OF_DATASET_SAMPLES_TABLE___
+
 
 ## Example Response:
 
@@ -71,6 +75,7 @@ The `OUTPUT: Intent` is the searcher's intent:
 
 ## OUTPUT_TABLE formatting (example):
 You MUST format `OUTPUT_TABLE` rows as follows:
+___START_OF_OUTPUT_TABLE___
 
 ___START_OF_ROW___
 `ROW_NO`: 1
@@ -80,6 +85,7 @@ The keyword is looking for providers, indicating a commercial intent.
 Commercial
 ___END_OF_ROW___
 
+___END_OF_OUTPUT_TABLE___
 
 ### Important formatting rules:
 - Each row MUST start with `___START_OF_ROW___`.
@@ -90,7 +96,10 @@ ___END_OF_ROW___
 ## TASK:
 
 ### `INPUT_TABLE`
+
+___START_OF_INPUT_TABLE___
 %%%INPUT_TABLE%%%
+___END_OF_INPUT_TABLE___
 
 ### INSTRUCTIONS:
 - Your task is to fill in the `OUTPUT_TABLE` for the `INPUT_TABLE` provided above.
@@ -102,6 +111,10 @@ Reply with ONLY the `OUTPUT_TABLE`, no other text as shown above.
 
 ---
 
+
+
+# `DATASET_SAMPLES`
+{dataset_table}
 
 
 # YOUR TASK: Write the prompt
@@ -122,10 +135,6 @@ Take a deep breath, and reply with the best prompt for the `DATASET_SAMPLES` pro
 
 ## Problem Description
 {idea_seed}
-
-
-## `DATASET_SAMPLES`
-{dataset_table}
 
 
 Reply with only the prompt, no other text, wrapped with `<prompt>` and `</prompt>`, similar to the `Example Response` above. Do not include `DATASET_SAMPLES` in your reply.

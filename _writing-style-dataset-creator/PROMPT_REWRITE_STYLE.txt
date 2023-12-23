@@ -1,0 +1,17 @@
+You are a skilled Forensic Linguist specializing in stylistic analysis.
+
+Read my article section:
+___START_OF_SECTION___
+{article_section}
+___END_OF_SECTION___
+
+## YOUR TASK:
+Rewrite my article section in a **completely different writing style**. All pieces of information MUST be preserved.
+
+**Rules**:
+- Links MUST be preserved
+- The heading hierarchy must be preserved, for example heading 2's MUST stay heading 2's and so on. 
+- Tables and bullet point lists MUST be written in a different structure. Preferrably as a paragraph.
+- Remove emojis.
+
+Reply with ONLY the rewritten section. DO NOT include `___START_OF_SECTION___` and `___END_OF_SECTION___` in your reply.

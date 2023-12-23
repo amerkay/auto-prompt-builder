@@ -1,0 +1,9 @@
+# Problem Description
+{idea_seed}
+
+
+# `DATASET_SAMPLES`
+{dataset_table}
+
+
+Remember each row MUST start with `___START_OF_ROW___` and end with `___END_OF_ROW___`.
