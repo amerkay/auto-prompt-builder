@@ -3,4 +3,4 @@
 
 
 # `DATASET_SAMPLES`
-{dataset_table}
+{dataset_samples_table}

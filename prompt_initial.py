@@ -11,14 +11,14 @@ def invoke_generate_prompt_initial(model, prompt_init_template, df_sample, idea_
     save_tmp_file(
         "01-prompt_init.md",
         prompt_init_template.format_messages(
-            dataset_table=df_to_multiline_table(df_sample), idea_seed=idea_seed
+            dataset_samples_table=df_to_multiline_table(df_sample), idea_seed=idea_seed
         ),
     )
 
     # Invoke the LangChain chain to generate the prompt
     print("Generating initial prompt...")
     answer = chain.invoke(
-        {"dataset_table": df_to_multiline_table(df_sample), "idea_seed": idea_seed}
+        {"dataset_samples_table": df_to_multiline_table(df_sample), "idea_seed": idea_seed}
     )
 
     save_tmp_file("02-prompt_init-response.md", answer)

@@ -3,7 +3,7 @@
 
 
 # `DATASET_SAMPLES`
-{dataset_table}
+{dataset_samples_table}
 
 
 Remember each row MUST start with `___START_OF_ROW___` and end with `___END_OF_ROW___`.

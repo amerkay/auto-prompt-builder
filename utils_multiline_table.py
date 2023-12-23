@@ -51,7 +51,8 @@ def parse_multiline_table(response_str, expected_count=None):
     if expected_count is not None and len(rows) != expected_count:
         error_message = (
             "Number of rows does not match the expected count. "
-            f"Expected {expected_count} rows, got {len(rows)}."
+            f"Expected {expected_count} rows, got {len(rows)}. "
+            "Increase the MODEL_EVALUATE_MAX_TOKENS parameter?"
         )
         raise ValueError(error_message)
 
