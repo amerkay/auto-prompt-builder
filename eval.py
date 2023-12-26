@@ -56,21 +56,30 @@ def invoke_test_prompt_against_dataset(
 
     # Call the new function
     df_generated = process_chunks_and_aggregate(
-        df_chunks, prompt_template, i_prompt, chain35, concurrency)
+        df_chunks, prompt_template, i_prompt, chain35, concurrency
+    )
 
     # Add columns with `input` in their name from df to df_generated
+    input_columns = []
     for column in df.columns:
         if "input" in column.lower():
             df_generated[column] = df[column]
+            input_columns.append(column)
 
-    # Calculate the accuracy of the generated data for the entire dataset
-    # First, find the name of the output column
+    # Move the input columns right after the 'ROW_NO' field
+    for column in reversed(input_columns):  # reverse to keep the original order
+        df_generated.insert(
+            df_generated.columns.get_loc("ROW_NO") + 1, column, df_generated.pop(column)
+        )
+
+    # Find the name of the `OUTPUT` column
     output_column_name = None
     for column in df_generated.columns:
         if "output" in column.lower():
             output_column_name = column
             break
 
+    # Calculate the accuracy of the generated data for the entire dataset
     accuracy, df_generated = calculate_accuracy(df, df_generated, output_column_name)
     print(f"Correct answers: {accuracy:.2f}%")
 
@@ -78,7 +87,7 @@ def invoke_test_prompt_against_dataset(
 
 
 def process_chunks_and_aggregate(
-        df_chunks, prompt_template, i_prompt, chain, concurrency
+    df_chunks, prompt_template, i_prompt, chain, concurrency
 ):
     # Initialize an ordered dictionary to store results from each chunk
     chunk_list = []
@@ -91,7 +100,8 @@ def process_chunks_and_aggregate(
         futures = {
             executor.submit(
                 process_chunk_with_retry, prompt_template, i_prompt, chain, j, chunk
-            ): j for j, chunk in enumerate(df_chunks, start=1)
+            ): j
+            for j, chunk in enumerate(df_chunks, start=1)
         }
 
         # Get the results from the completed Future instances
@@ -113,7 +123,9 @@ def process_chunks_and_aggregate(
 def process_chunk_with_retry(prompt_template, i_prompt, chain, j, chunk, retries=3):
     for retry in range(retries):
         try:
-            return process_chunk(prompt_template, i_prompt, chain, j, chunk, retry=retry)
+            return process_chunk(
+                prompt_template, i_prompt, chain, j, chunk, retry=retry
+            )
         except Exception as e:
             print("Retrying...", e)
 
@@ -139,7 +151,8 @@ def process_chunk(prompt_template, i_prompt, chain35, j, chunk, retry=0):
         }
     )
     save_tmp_file(
-        f"03-prompt-{i_prompt}-chunk-{j}-retry-{retry}-response.md", answer_prompt_gen_chunk
+        f"03-prompt-{i_prompt}-chunk-{j}-retry-{retry}-response.md",
+        answer_prompt_gen_chunk,
     )
 
     df_generated_chunk = parse_multiline_table(

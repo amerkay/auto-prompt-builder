@@ -6,4 +6,4 @@
 {dataset_samples_table}
 
 
-Remember each row MUST start with `___START_OF_ROW___` and end with `___END_OF_ROW___`.
+Remember each row MUST start with `___START_OF_ROW___` and end with `___END_OF_ROW___`. Each field within a row is denoted by backticks. For example, the ROW_NO will be `ROW_NO`, etc.
