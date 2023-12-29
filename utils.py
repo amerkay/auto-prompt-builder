@@ -5,6 +5,7 @@ import inspect
 from langchain.chat_models import ChatOpenAI
 from langchain.llms import Together
 from langchain_core.messages.base import BaseMessage
+from langchain.callbacks.openai_info import OpenAICallbackHandler
 
 
 def load_model(name, temperature, max_tokens):
@@ -157,3 +158,48 @@ def load_text_file(filename):
 
     with open(full_file_path, "r") as file:
         return file.read()
+
+
+def replace_percent_variables(
+    prompt_generated_str, replacements=[("%%%INPUT_TABLE%%%", "{input_table}")]
+):
+    """
+    Replaces percent variables in the prompt generated string with their corresponding replacements.
+
+    Args:
+        prompt_generated_str (str): The prompt generated string.
+        replacements (list, optional): A list of tuples containing the percent variables and
+        their replacements.
+            Defaults to [("%%%INPUT_TABLE%%%", "{input_table}")].
+
+    Returns:
+        str: The prompt generated string with percent variables replaced.
+
+    Raises:
+        ValueError: If the prompt does not contain a percent variable, an error is raised.
+    """
+    for percent_str, replacement in replacements:
+        # If the prompt does not contain the variable, raise error
+        if percent_str not in prompt_generated_str:
+            raise ValueError(
+                f"Prompt does not contain the variable {percent_str}. "
+                "Cannot replace the variable."
+            )
+
+        prompt_generated_str = prompt_generated_str.replace(percent_str, replacement)
+
+    return prompt_generated_str
+
+
+def print_cost(cb: OpenAICallbackHandler):
+    """
+    Prints the total cost and tokens used by the OpenAICallbackHandler.
+
+    Parameters:
+    cb (OpenAICallbackHandler): The OpenAICallbackHandler object.
+
+    Returns:
+    None
+    """
+    if cb.total_tokens > 0:
+        print(f">> Total cost: {cb.total_cost:.3f} USD, tokens used {cb.total_tokens}")

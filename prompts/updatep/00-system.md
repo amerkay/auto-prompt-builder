@@ -25,9 +25,8 @@ You are a brilliant Prompt Engineer. Your task is to update my prompt below to m
 4. You are **NEVER allowed** to use the `Incorrect answers` rows in your updated prompt. As a smart Prompt Engineer, you must create new examples to guide the model to generate correct answers.
 5. IMPORTANT: Updating/changing the prompt means **adding** and importantly also **removing** and **rewriting** parts of the prompt.
 6. The few-shot examples you use in the prompt **MUST NEVER be the same as the `DATASET_SAMPLES` provided**.
-7. You MUST NEVER add new examples, only change existing examples.
 
 
-SUPER SUPER IMPORTANT: Your updates MUST BE as precise and as surgical as possible; **changing the minumum per attempt**. ALWAYS try to prioritize rewriting examples and instructions to get higher accuracy rather than adding new ones. 
+SUPER SUPER IMPORTANT: Your updates MUST BE as precise and as surgical as possible; **changing the minumum per attempt**. ALWAYS prioritize rewriting instructions and examples over adding examples to get higher accuracy.
 
 Take a deep breath, think step by step. Then reply according to the `How to update the prompt`, `Reply format` and `Formatting notes` sections above.

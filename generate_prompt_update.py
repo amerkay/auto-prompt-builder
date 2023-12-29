@@ -3,10 +3,12 @@ from utils import (
     save_tmp_file,
     extract_prompt_from_answer,
     extract_changes_made_from_answer,
+    print_cost
 )
 from utils_multiline_table import df_to_multiline_table
 from langchain.schema.output_parser import StrOutputParser
 from prompts.updatep.prompt import get_prompt_template
+from langchain.callbacks import get_openai_callback
 
 
 class GeneratePromptUpdate:
@@ -58,14 +60,17 @@ class GeneratePromptUpdate:
         # Get the incorrect answers from the generated data
         df_incorrect = self.get_incorrect_answers(df_generated)
 
+        variables = {
+            "current_prompt": prompt_previous,
+            "incorrect_answers_table": df_to_multiline_table(df_incorrect),
+            "previous_attempts": self.previous_attempts.to_string(),
+            "idea_seed": self.idea_seed,
+        }
+
         # Invoke the LangChain chain to update the prompt
         print("Updating prompt...")
-        prompt_updatep_str = self.prompt_template.format(
-            current_prompt=prompt_previous,
-            incorrect_answers_table=df_to_multiline_table(df_incorrect),
-            previous_attempts=self.previous_attempts.to_string(),
-            idea_seed=self.idea_seed,
-        )
+        prompt_updatep_str = self.prompt_template.format(**variables)
+
         # print("\n\n\n>> prompt_updatep is")
         # print(prompt_updatep_str, "\n\n")
 
@@ -75,21 +80,18 @@ class GeneratePromptUpdate:
 
         save_tmp_file(f"{file_prefix}-(1).md", prompt_updatep_str)
 
-        answer_updatep = self.get_chain().invoke(
-            {
-                "current_prompt": prompt_previous,
-                "incorrect_answers_table": df_to_multiline_table(df_incorrect),
-                "previous_attempts": self.previous_attempts.to_string(),
-                "idea_seed": self.idea_seed,
-            }
-        )
-        save_tmp_file(f"{file_prefix}-(2)-response.md", answer_updatep)
+        answer = None
+        with get_openai_callback() as cb:
+            answer = self.get_chain().invoke(variables)
+            print_cost(cb)
+
+        save_tmp_file(f"{file_prefix}-(2)-response.md", answer)
 
         # Extract the updated prompt
-        prompt_updated_str = extract_prompt_from_answer(answer_updatep)
+        prompt_updated_str = extract_prompt_from_answer(answer)
         save_tmp_file(f"{file_prefix}-(3)-extracted.md", prompt_updated_str)
 
-        changes_made_str = extract_changes_made_from_answer(answer_updatep)
+        changes_made_str = extract_changes_made_from_answer(answer)
         save_tmp_file(f"{file_prefix}-(4)-changes-made.md", changes_made_str)
 
         # print(f"\n\n>> prompt_updated_str is:", prompt_updated_str)
@@ -107,11 +109,12 @@ class GeneratePromptUpdate:
 
         if max_rows > len(df_incorrect):
             max_rows = len(df_incorrect)
-            print(f"Pick the first {max_rows} examples...")
+            print(f"Pick the first {max_rows} incorrect examples...")
             df_incorrect = df_incorrect.head(max_rows)
         else:
             print(f"Pick {max_rows} random incorrect examples...")
-            df_incorrect = df_incorrect.sample(max_rows).reset_index(drop=True)
+            df_incorrect = df_incorrect.sample(max_rows, random_state=42)
+            df_incorrect = df_incorrect.reset_index(drop=True)
 
         # print(df_to_multiline_table(df_incorrect), "\n")
 
