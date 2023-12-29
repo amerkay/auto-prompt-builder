@@ -36,33 +36,6 @@ class EvaluateAgainstDataset:
         self.attempt_no = None
         self.plan_id = None
 
-    def set_prompt(self, prompt_str):
-        """
-        Set the prompt string.
-
-        Args:
-        prompt_str: String prompt to use with LangChain.
-        """
-        self.prompt_template = PromptTemplate.from_template(prompt_str)
-
-    def set_attempt_no(self, attempt_no):
-        """
-        Set the attempt number.
-
-        Args:
-        attempt_no: Attempt number for the prompt being tested.
-        """
-        self.attempt_no = attempt_no
-
-    def set_plan_id(self, plan_id):
-        """
-        Set the plan ID.
-
-        Args:
-        plan_id: ID for the ToT (Tree of Thought plan) being tested.
-        """
-        self.plan_id = plan_id
-
     def get_chain(self):
         """
         Returns the LangChain chain.
@@ -103,7 +76,7 @@ class EvaluateAgainstDataset:
 
         return accuracy, df_generated
 
-    def invoke(self):
+    def invoke(self, prompt_str, plan_id, attempt_no):
         """
         Invokes the test prompt against the original dataset.
 
@@ -111,6 +84,10 @@ class EvaluateAgainstDataset:
         DataFrame: Generated DataFrame with results.
         float: Accuracy percentage.
         """
+        self.prompt_template = PromptTemplate.from_template(prompt_str)
+        self.plan_id = plan_id
+        self.attempt_no = attempt_no
+
         # Split the dataset into chunks
         df_chunks = chunk_dataframe(self.df_original, self.max_chunk_rows)
 
