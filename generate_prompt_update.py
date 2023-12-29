@@ -13,14 +13,14 @@ class GeneratePromptUpdate:
     def __init__(
         self,
         model,
-        i_prompt: int,
+        attempt_no: int,
         plan_id: int,
         idea_seed: str,
         previous_attempts: PreviousAttempts,
         max_rows_incorrect: int,
     ):
         self.model = model
-        self.i_prompt = i_prompt
+        self.attempt_no = attempt_no
         self.plan_id = plan_id
         self.idea_seed = idea_seed
         self.previous_attempts = previous_attempts
@@ -70,7 +70,7 @@ class GeneratePromptUpdate:
         # print(prompt_updatep_str, "\n\n")
 
         file_prefix = (
-            f"04-updatep-plan-{self.plan_id}-attempt-{self.i_prompt}-retry-{retry}"
+            f"04-updatep-plan-{self.plan_id}-attempt-{self.attempt_no}-retry-{retry}"
         )
 
         save_tmp_file(f"{file_prefix}-(1).md", prompt_updatep_str)

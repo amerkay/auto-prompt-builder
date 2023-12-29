@@ -22,7 +22,7 @@ class EvaluateAgainstDataset:
         model: LangChain model used for generating data.
         prompt_template: Template for the prompt to use with LangChain.
         df_original: The original DataFrame for comparison.
-        i_prompt: Identifier for the prompt being tested.
+        attempt_no: Identifier for the prompt being tested.
         plan_id: Identifier for the ToT (Tree of Thought plan) being tested.
         max_chunk_rows: Maximum number of rows per chunk for processing.
         concurrency: Number of concurrent threads for processing. Default is 3.
@@ -33,7 +33,7 @@ class EvaluateAgainstDataset:
         self.concurrency = concurrency
 
         self.prompt_template = None
-        self.i_prompt = None
+        self.attempt_no = None
         self.plan_id = None
 
     def set_prompt(self, prompt_str):
@@ -45,21 +45,21 @@ class EvaluateAgainstDataset:
         """
         self.prompt_template = PromptTemplate.from_template(prompt_str)
 
-    def set_i_prompt(self, i_prompt):
+    def set_attempt_no(self, attempt_no):
         """
-        Set the prompt identifier.
+        Set the attempt number.
 
         Args:
-        i_prompt: Identifier for the prompt being tested.
+        attempt_no: Attempt number for the prompt being tested.
         """
-        self.i_prompt = i_prompt
+        self.attempt_no = attempt_no
 
     def set_plan_id(self, plan_id):
         """
-        Set the plan identifier.
+        Set the plan ID.
 
         Args:
-        plan_id: Identifier for the ToT (Tree of Thought plan) being tested.
+        plan_id: ID for the ToT (Tree of Thought plan) being tested.
         """
         self.plan_id = plan_id
 
@@ -221,7 +221,7 @@ class EvaluateAgainstDataset:
             raise ValueError("Prompt template is not set!")
 
         file_prefix = (
-            f"03-plan-{self.plan_id}-attempt-{self.i_prompt}-chunk-{j}-retry-{retry}"
+            f"03-plan-{self.plan_id}-attempt-{self.attempt_no}-chunk-{j}-retry-{retry}"
         )
 
         print(f"Getting chunk {j} retry {retry} with {len(chunk)} rows...", flush=True)
