@@ -1,0 +1,42 @@
+{
+    "expert_prompt_plans": [
+        {
+            "id": 1,
+            "expert_title": "Marketing Specialist",
+            "plan": "Analyze market trends and consumer behavior related to the keywords. Consider user search patterns and the contexts in which such keywords appear. Determine if their usage is aligned with transactional, commercial, informational, or navigational intents."
+        },
+        {
+            "id": 2,
+            "expert_title": "SEO Analyst",
+            "plan": "Evaluate the keyword for common SEO practices, such as keyword stuffing and search rankings. Analyze if the content associated with these keywords is more likely to be transactional, commercial, informational, or navigational."
+        },
+        {
+            "id": 3,
+            "expert_title": "Data Scientist",
+            "plan": "Perform a statistical analysis of keyword usage across various websites. Look for patterns in usage, frequency, and associated terms. Classify the keyword's intent as transactional, commercial, informational, or navigational based on these patterns."
+        },
+        {
+            "id": 4,
+            "expert_title": "Linguist",
+            "plan": "Conduct a linguistic analysis of the keyword. Examine the syntax, semantics, and pragmatics of its usage in real-world contexts. Determine whether the keyword's intent is transactional, commercial, informational, or navigational."
+        },
+        {
+            "id": 5,
+            "expert_title": "Consumer Psychologist",
+            "plan": "Apply principles of consumer psychology to understand the keyword's impact on the target audience. Assess factors such as motivation, need recognition, and decision-making processes. Determine if the intent behind the keyword is transactional, commercial, informational, or navigational."
+        },
+        {
+            "id": 6,
+            "expert_title": "Integrated Strategy Expert",
+            "plan": "Combine market trend analysis, SEO strategy evaluation, statistical keyword analysis, linguistic evaluation, and consumer psychology principles. Cross-reference user search patterns, SEO practices, and linguistic usage of the keywords with statistical data on keyword frequency and context from various websites. Include an assessment of the psychological impact on the target audience, focusing on motivation and decision-making tendencies. This approach should identify whether the keyword's intent is transactional, commercial, informational, or navigational."
+        }
+    ],
+    "ranked_plans": [
+        6,
+        3,
+        2,
+        5,
+        1,
+        4
+    ]
+}

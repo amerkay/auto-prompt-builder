@@ -15,8 +15,6 @@ I used the `Current Prompt`, but the following answers were wrong, and do not ma
 
 
 ## Previous attempts to get higher accuracy
-Use the following log of changes per prompt re-write to guide your next move.
-
-If the accuracy drops, you MUST undo some of the previous changes and try a different idea.
+Use the following log of changes per prompt to guide your next move. If the accuracy drops, you MUST undo some of the previous changes and try a different idea.
 
 {previous_attempts}
