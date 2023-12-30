@@ -4,8 +4,9 @@ import json
 from langchain.schema.output_parser import StrOutputParser
 from langchain.output_parsers import PydanticOutputParser
 from langchain_core.pydantic_v1 import BaseModel, Field
+from langchain.callbacks import get_openai_callback
 
-from utils import save_tmp_file
+from utils import save_tmp_file, print_cost
 from utils_multiline_table import df_to_multiline_table
 from prompts.expert_plans.prompt import get_prompt_template
 
@@ -36,39 +37,33 @@ class GenerateExpertPlans:
         return chain
 
     def invoke(self):
+        variables = {
+            "dataset_samples_table": df_to_multiline_table(self.df_sample),
+            "idea_seed": self.idea_seed,
+        }
+
+        file_prefix = "01-prompt_tot"
+
         # Set up a parsers + chain
         output_parser = PydanticOutputParser(pydantic_object=ExpertPlans)
         output_parser_str = StrOutputParser()
-        chain = self.get_chain()
+        prompt_formatted = self.prompt_template.format(**variables)
 
-        save_tmp_file(
-            "01-prompt_tot-(1).md",
-            self.prompt_template.format_messages(
-                dataset_samples_table=df_to_multiline_table(self.df_sample),
-                idea_seed=self.idea_seed,
-            ),
-        )
+        save_tmp_file(f"{file_prefix}-(1).md", prompt_formatted)
 
         # Invoke the LangChain chain to generate the prompt
         print("Generating 5 ranked ToT prompt construction plans...")
-        answer = chain.invoke(
-            {
-                "dataset_samples_table": df_to_multiline_table(self.df_sample),
-                "idea_seed": self.idea_seed,
-            }
-        )
+        with get_openai_callback() as cb:
+            answer = self.get_chain().invoke(variables)
+            print_cost(cb)
 
         answer_str = output_parser_str.parse(answer.content)
-        save_tmp_file("01-prompt_tot-(2)-response.md", answer_str)
+        save_tmp_file(f"{file_prefix}-(2)-response.md", answer_str)
 
         # Parse response
         answer_obj = output_parser.parse(answer.content)
-        save_tmp_file("01-prompt_tot-(3)-parsed.md", answer_obj.to_json())
+        save_tmp_file(f"{file_prefix}-(3)-parsed.md", answer_obj.to_json())
 
-        # answer_dict = answer_obj.to_dict()
-        # return self.reorder_plans(
-        #     answer_dict["expert_prompt_plans"], answer_dict["ranked_plans"]
-        # )
         return self.reorder_plans(
             answer_obj.expert_prompt_plans, answer_obj.ranked_plans
         )

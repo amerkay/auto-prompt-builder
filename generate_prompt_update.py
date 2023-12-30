@@ -68,7 +68,7 @@ class GeneratePromptUpdate:
         }
 
         # Invoke the LangChain chain to update the prompt
-        print("Updating prompt...")
+        print("\nUpdating prompt...")
         prompt_updatep_str = self.prompt_template.format(**variables)
 
         # print("\n\n\n>> prompt_updatep is")
@@ -103,6 +103,9 @@ class GeneratePromptUpdate:
 
         # Filter df_generated to only include incorrect answers
         df_incorrect = df_generated[~df_generated["Is Correct?"]].reset_index(drop=True)
+        # Drop the column `Thinking step by step`, if it exists
+        if "Thinking step by step" in df_incorrect.columns:
+            df_incorrect = df_incorrect.drop(columns=["Thinking step by step"])
 
         print(f"Incorrect answers count: {len(df_incorrect)}")
         # print(df_to_multiline_table(df_incorrect), "\n")
