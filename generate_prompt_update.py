@@ -1,4 +1,5 @@
 from previous_attempts import PreviousAttempts
+from data_handling import get_df_incorrect_answers
 from utils import (
     save_tmp_file,
     extract_prompt_from_answer,
@@ -99,17 +100,12 @@ class GeneratePromptUpdate:
         return prompt_updated_str, changes_made_str
 
     def get_incorrect_answers(self, df_generated):
-        max_rows = self.max_rows_incorrect
 
         # Filter df_generated to only include incorrect answers
-        df_incorrect = df_generated[~df_generated["Is Correct?"]].reset_index(drop=True)
-        # Drop the column `Thinking step by step`, if it exists
-        if "Thinking step by step" in df_incorrect.columns:
-            df_incorrect = df_incorrect.drop(columns=["Thinking step by step"])
-
+        df_incorrect = get_df_incorrect_answers(df_generated)
         print(f"Incorrect answers count: {len(df_incorrect)}")
-        # print(df_to_multiline_table(df_incorrect), "\n")
 
+        max_rows = self.max_rows_incorrect
         if max_rows > len(df_incorrect):
             max_rows = len(df_incorrect)
             print(f"Pick the first {max_rows} incorrect examples...")
@@ -118,7 +114,5 @@ class GeneratePromptUpdate:
             print(f"Pick {max_rows} random incorrect examples...")
             df_incorrect = df_incorrect.sample(max_rows, random_state=42)
             df_incorrect = df_incorrect.reset_index(drop=True)
-
-        # print(df_to_multiline_table(df_incorrect), "\n")
 
         return df_incorrect

@@ -3,7 +3,7 @@ import concurrent.futures
 from langchain.schema.output_parser import StrOutputParser
 from utils import save_tmp_file
 from utils_multiline_table import df_to_multiline_table, parse_multiline_table
-from data_handling import chunk_dataframe
+from data_handling import chunk_dataframe, get_input_columns, get_output_column_name
 from langchain_core.prompts import PromptTemplate
 
 
@@ -76,6 +76,37 @@ class EvaluateAgainstDataset:
 
         return accuracy, df_generated
 
+    def add_input_columns_to_df(self, df_original, df_generated, input_columns):
+        """
+        Adds the input columns from the original DataFrame to the generated DataFrame.
+        """
+        # Add columns with 'input' in their name from df_original to df_generated
+        for column in input_columns:
+            df_generated[column] = df_original[column]
+        return df_generated
+
+    def move_input_columns(self, df_generated, input_columns):
+        """
+        Moves the input columns right after the 'ROW_NO' field in the DataFrame.
+        """
+        # Move the input columns right after the 'ROW_NO' field
+        for column in reversed(input_columns):  # reverse to keep the original order
+            df_generated.insert(
+                df_generated.columns.get_loc("ROW_NO") + 1,
+                column,
+                df_generated.pop(column),
+            )
+        return df_generated
+
+    def calculate_and_print_accuracy(self, df, output_column_name):
+        """
+        Calculates the accuracy of the generated data for the entire dataset and prints the result.
+        """
+        # Calculate the accuracy of the generated data for the entire dataset
+        accuracy, df = self.calculate_accuracy(df, output_column_name)
+        print(f"Correct answers: {accuracy:.2f}%")
+        return accuracy, df
+
     def invoke(self, prompt_str, plan_id, attempt_no):
         """
         Invokes the test prompt against the original dataset.
@@ -91,36 +122,25 @@ class EvaluateAgainstDataset:
         # Split the dataset into chunks
         df_chunks = chunk_dataframe(self.df_original, self.max_chunk_rows)
 
-        # Call the new function
+        # Process each chunk and aggregate the results
         df_generated = self.process_chunks_and_aggregate(df_chunks)
 
-        # Add columns with `input` in their name from df_original to df_generated
-        input_columns = []
-        for column in self.df_original.columns:
-            if "input" in column.lower():
-                df_generated[column] = self.df_original[column]
-                input_columns.append(column)
+        # Get input columns and add them to the generated DataFrame
+        input_columns = get_input_columns(self.df_original)
+        df_generated = self.add_input_columns_to_df(
+            self.df_original, df_generated, input_columns
+        )
 
         # Move the input columns right after the 'ROW_NO' field
-        for column in reversed(input_columns):  # reverse to keep the original order
-            df_generated.insert(
-                df_generated.columns.get_loc("ROW_NO") + 1,
-                column,
-                df_generated.pop(column),
-            )
+        df_generated = self.move_input_columns(df_generated, input_columns)
 
-        # Find the name of the `OUTPUT` column
-        output_column_name = None
-        for column in df_generated.columns:
-            if "output" in column.lower():
-                output_column_name = column
-                break
+        # Find the name of the 'OUTPUT' column
+        output_column_name = get_output_column_name(df_generated)
 
-        # Calculate the accuracy of the generated data for the entire dataset
-        accuracy, df_generated = self.calculate_accuracy(
+        # Calculate the accuracy and print the result
+        accuracy, df_generated = self.calculate_and_print_accuracy(
             df_generated, output_column_name
         )
-        print(f"Correct answers: {accuracy:.2f}%")
 
         return df_generated, accuracy
 

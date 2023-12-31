@@ -30,6 +30,10 @@ def load_and_clean_dataset(file_path):
         if difference.nunique() == 1:
             df = df.drop(first_column, axis=1)
 
+    # Add a ROW_NO column if it doesn't exist, add to beginning of DataFrame
+    if "ROW_NO" not in df.columns:
+        df.insert(0, "ROW_NO", range(1, 1 + len(df)))
+
     return df
 
 
@@ -45,4 +49,45 @@ def chunk_dataframe(df, chunk_size):
     list[DataFrame]: A list of DataFrames, each with a maximum
         of chunk_size rows.
     """
-    return [df[i: i + chunk_size] for i in range(0, df.shape[0], chunk_size)]
+
+    return [
+        df[i : i + chunk_size] for i in range(0, df.shape[0], chunk_size)  # noqa: E203
+    ]
+
+
+def get_input_columns(df):
+    """
+    Returns a list of column names that contain the word "input".
+    """
+    # Get all columns that have 'input' in their name
+    input_columns = [column for column in df.columns if "input" in column.lower()]
+    return input_columns
+
+
+def get_output_column_name(df):
+    """
+    Returns the name of the output column.
+    """
+    # Find the name of the 'OUTPUT' column
+    for column in df.columns:
+        if "output" in column.lower():
+            return column
+
+
+def get_df_incorrect_answers(df_generated):
+    """
+    Returns a DataFrame containing only the incorrect answers.
+
+    Args:
+    df_generated (DataFrame): The generated DataFrame from the EvaluateAgainstDataset class.
+
+    Returns:
+    DataFrame: A DataFrame containing only the incorrect answers.
+    """
+    # Filter df_generated to only include incorrect answers
+    df_incorrect = df_generated[~df_generated["Is Correct?"]].reset_index(drop=True)
+    # Drop the column `Thinking step by step`, if it exists
+    if "Thinking step by step" in df_incorrect.columns:
+        df_incorrect = df_incorrect.drop(columns=["Thinking step by step"])
+
+    return df_incorrect

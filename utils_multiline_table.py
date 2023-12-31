@@ -17,14 +17,16 @@ def df_to_multiline_table(df, is_remove_output_field=False):
     result = ""
     for index, row in df.iterrows():
         result += "\n___START_OF_ROW___\n"
-        if "ROW_NO" not in df.columns:
-            result += "`ROW_NO`: " + str(index) + "\n"
         for column in df.columns:
             # skip output field if is_remove_output_field is True
             if is_remove_output_field and "output" in column.lower():
                 continue
+            
+            # if ROW_NO is in column name, do not add enter before number
+            result += "`" + column + "`: "
+            if "ROW_NO" not in column:
+                result += "\n"
 
-            result += "`" + column + "`: \n"
             result += str(row[column]) + "\n"
         result += "___END_OF_ROW___\n"
     return result
