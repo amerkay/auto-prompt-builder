@@ -42,7 +42,7 @@ class GeneratePromptUpdate:
         self,
         df_generated,
         prompt_previous,
-        retries=3,
+        retries=2,
     ):
         for retry in range(retries):
             try:

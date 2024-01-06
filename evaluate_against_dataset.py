@@ -179,7 +179,7 @@ class EvaluateAgainstDataset:
 
         return df_generated
 
-    def process_chunk_with_retry(self, j, chunk, retries=3):
+    def process_chunk_with_retry(self, j, chunk, retries=2):
         """
         Process a chunk of DataFrame with retries in case of failure.
 
