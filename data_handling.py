@@ -67,11 +67,19 @@ def get_input_columns(df):
 def get_output_column_name(df):
     """
     Returns the name of the output column.
+
+    Raises:
+    ValueError: If no 'output' column is found.
+
+    Returns:
+    str: The name of the output column.
     """
     # Find the name of the 'OUTPUT' column
     for column in df.columns:
         if "output" in column.lower():
             return column
+
+    raise ValueError("No 'output' column found in the DataFrame.")
 
 
 def get_df_incorrect_answers(df_generated):

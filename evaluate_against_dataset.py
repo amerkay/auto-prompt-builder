@@ -54,6 +54,7 @@ class EvaluateAgainstDataset:
         Returns:
         float: The accuracy percentage.
         """
+        # print(f"Output column: {output_column_name}")
         # Add the 'Truth' column to the generated DataFrame
         df_generated = df_generated.assign(Truth=self.df_original[output_column_name])
 

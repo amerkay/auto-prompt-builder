@@ -1,6 +1,11 @@
 class BestPrompt:
     """
     This class is used to keep track of the best prompt and its accuracy.
+
+    Attributes:
+        accuracy (float): The accuracy of the best prompt.
+        prompt (str): The text of the best prompt.
+        plan (object): The plan associated with the best prompt.
     """
 
     def __init__(self):
@@ -9,27 +14,31 @@ class BestPrompt:
         """
         self.accuracy = 0
         self.prompt = ""
+        self.plan = None
 
-    def update(self, new_accuracy, new_prompt):
+    def update(self, new_accuracy, new_prompt, plan):
         """
         Update the best prompt if the new prompt has higher accuracy.
 
         Args:
             new_accuracy (float): Accuracy of the new prompt.
             new_prompt (str): The new prompt text.
+            plan (object): The plan associated with the new prompt.
         """
         if new_accuracy > self.accuracy:
             self.accuracy = new_accuracy
             self.prompt = new_prompt
+            self.plan = plan
 
     def get_best_prompt(self):
         """
         Returns the best prompt and its accuracy.
 
         Returns:
-            Tuple: A tuple containing the best prompt and its accuracy.
+            Tuple: A tuple containing the best prompt, its accuracy, and the associated plan.
         """
-        return self.prompt, self.accuracy
+        return self.prompt, self.accuracy, self.plan
+
 
 
 # # Example of how to use the BestPrompt class

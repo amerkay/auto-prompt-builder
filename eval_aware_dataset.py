@@ -29,18 +29,22 @@ class EvalAwareDataset:
                     [self.df_previous_mistakes, new_row], ignore_index=True
                 )
 
-    def get_sample(self, max_rows):
+    def get_sample(self, max_rows, is_include_mistakes=True):
         """
         Generate a sample dataset including previous mistakes.
 
         :param max_rows: int, maximum number of rows to return.
         :return: DataFrame, a sample of the dataset.
         """
-        high_priority_mistakes = self._get_high_priority_mistakes(max_rows)
-        remaining_rows = max_rows - len(high_priority_mistakes)
-        sample = self._get_sample(remaining_rows)
-
-        return pd.concat([high_priority_mistakes, sample])
+        if is_include_mistakes:
+            # Get rows with the highest mistake count, then fill in the rest with the top rows
+            high_priority_mistakes = self._get_high_priority_mistakes(max_rows)
+            remaining_rows = max_rows - len(high_priority_mistakes)
+            sample = self._get_sample(remaining_rows)
+            return pd.concat([high_priority_mistakes, sample])
+        else:
+            # Get a sample excluding high priority mistakes
+            return self._get_sample(max_rows)
 
     def _get_high_priority_mistakes(self, max_rows):
         """
