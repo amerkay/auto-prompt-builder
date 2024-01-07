@@ -1,7 +1,7 @@
-from strategy_sequential import SequentialStrategy
+from strategies.base import BaseStrategy
 
 
-class BasicMemoryStrategy(SequentialStrategy):
+class BasicMemoryStrategy(BaseStrategy):
     """
     ExpertPlanMemoryStrategy is a class that extends SequentialStrategy to focus on
     utilizing expert plans more effectively, particularly by implementing a two-run
