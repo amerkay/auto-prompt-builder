@@ -8,12 +8,12 @@ class TreeSearchStrategy(BaseStrategy):
     """
 
     def _check_must_stop(
-        self, accuracy, min_acceptable_accuracy, previous_accuracy, plan, mutation
+        self, accuracy, min_acceptable_accuracy, plan, mutation, previous_accuracy=0
     ):
         # Check if accuracy is below min_acceptable_accuracy, and stop if so
         if accuracy < min_acceptable_accuracy:
             print(
-                f"Accuracy below min_acceptable_accuracy for plan {plan.id}"
+                f">>>> Accuracy below min_acceptable_accuracy for plan {plan.id}"
                 f", mutation {mutation} is {accuracy}%. Next!"
             )
             return True
@@ -21,8 +21,16 @@ class TreeSearchStrategy(BaseStrategy):
         # Check if accuracy is below previous_accuracy, and stop if so
         if accuracy < previous_accuracy:
             print(
-                f"Accuracy below previous accuracy for plan {plan.id}"
+                f">>>> Accuracy below previous accuracy for plan {plan.id}"
                 f", mutation {mutation} is {accuracy}%. Next!"
+            )
+            return True
+
+        # Check if the goal accuracy is achieved
+        if accuracy >= self.goal_accuracy:
+            print(
+                f">>>> Goal accuracy {self.goal_accuracy}% achieved "
+                f"for plan {plan.id}, mutation {mutation}!"
             )
             return True
 
@@ -54,14 +62,11 @@ class TreeSearchStrategy(BaseStrategy):
         """
         accuracy = previous_accuracy
 
-        while (
-            accuracy < self.goal_accuracy
-            and self.attempt_no < self.max_attempts_per_plan
-        ):
+        while self.attempt_no < self.max_attempts_per_plan:
             accuracy = self._update_prompt(df_generated, prompt_str, plan)
 
             if self._check_must_stop(
-                accuracy, min_acceptable_accuracy, previous_accuracy, plan, mutation
+                accuracy, min_acceptable_accuracy, plan, mutation, previous_accuracy
             ):
                 return accuracy
 
@@ -82,9 +87,7 @@ class TreeSearchStrategy(BaseStrategy):
             plan, mutation
         )
 
-        if self._check_must_stop(
-            accuracy, min_acceptable_accuracy, accuracy, plan, mutation
-        ):
+        if self._check_must_stop(accuracy, min_acceptable_accuracy, plan, mutation):
             return accuracy
 
         accuracy = self._run_update_prompt_loop(
@@ -113,7 +116,7 @@ class TreeSearchStrategy(BaseStrategy):
             #     continue
 
             try:
-                for mutation in range(max_mutations):
+                for mutation in range(1, max_mutations + 1):
                     print(f"\n-> Running plan {plan.id} with mutation {mutation}...")
 
                     accuracy = self._run_one_mutation(
@@ -121,11 +124,9 @@ class TreeSearchStrategy(BaseStrategy):
                     )
 
                     # Break the loop if the goal accuracy is achieved
-                    if accuracy >= self.goal_accuracy:
-                        print(
-                            f"Goal accuracy {self.goal_accuracy}% achieved "
-                            f"for plan {plan.id}, mutation {mutation}!"
-                        )
+                    if self._check_must_stop(
+                        accuracy, min_acceptable_accuracy, plan, mutation
+                    ):
                         return self.best_prompt.get_best_prompt()
             except Exception as e:
                 print(f"Error: {e}")
