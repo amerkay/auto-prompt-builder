@@ -76,9 +76,9 @@ def extract_changes_made_from_answer(answer):
         raise ValueError("No match found")
 
 
-def save_tmp_file(filename, content, dir="_tmp"):
+def save_log_file(filename, content, dir="_log"):
     """
-    Saves the file `./_tmp/{filename}` with the specified content.
+    Saves the file `./_log/{filename}` with the specified content.
 
     Parameters:
     filename (str): The name of the file to be saved.
@@ -89,7 +89,7 @@ def save_tmp_file(filename, content, dir="_tmp"):
     None
     """
 
-    # Create the tmp directory if it doesn't exist
+    # Create the log directory if it doesn't exist
     os.makedirs(dir, exist_ok=True)
 
     # Define the full path for the file

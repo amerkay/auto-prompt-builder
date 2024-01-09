@@ -1,7 +1,7 @@
 from previous_attempts import PreviousAttempts
 from data_handling import get_df_incorrect_answers
 from utils import (
-    save_tmp_file,
+    save_log_file,
     extract_prompt_from_answer,
     extract_changes_made_from_answer,
     print_cost
@@ -79,21 +79,21 @@ class GeneratePromptUpdate:
             f"04-updatep-plan-{self.plan_id}-attempt-{self.attempt_no}-retry-{retry}"
         )
 
-        save_tmp_file(f"{file_prefix}-(1).md", prompt_updatep_str)
+        save_log_file(f"{file_prefix}-(1).md", prompt_updatep_str)
 
         answer = None
         with get_openai_callback() as cb:
             answer = self.get_chain().invoke(variables)
             print_cost(cb)
 
-        save_tmp_file(f"{file_prefix}-(2)-response.md", answer)
+        save_log_file(f"{file_prefix}-(2)-response.md", answer)
 
         # Extract the updated prompt
         prompt_updated_str = extract_prompt_from_answer(answer)
-        save_tmp_file(f"{file_prefix}-(3)-extracted.md", prompt_updated_str)
+        save_log_file(f"{file_prefix}-(3)-extracted.md", prompt_updated_str)
 
         changes_made_str = extract_changes_made_from_answer(answer)
-        save_tmp_file(f"{file_prefix}-(4)-changes-made.md", changes_made_str)
+        save_log_file(f"{file_prefix}-(4)-changes-made.md", changes_made_str)
 
         # print(f"\n\n>> prompt_updated_str is:", prompt_updated_str)
         return prompt_updated_str, changes_made_str

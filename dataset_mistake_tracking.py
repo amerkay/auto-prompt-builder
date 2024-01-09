@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-class EvalAwareDataset:
+class DatasetMistakeTracking:
     def __init__(self, df_all):
         """
         Initialize the DatasetWithMistakeTracking.
@@ -78,7 +78,7 @@ class EvalAwareDataset:
 
 # Example usage
 # df_all = pd.read_csv('your_dataset.csv')  # Assuming your dataset is in a CSV file
-# dataset_tracker = DatasetWithMistakeTracking(df_all)
+# dataset_mistake_tracker = DatasetWithMistakeTracking(df_all)
 # df_new_mistakes = pd.DataFrame({'ROW_NO': [1, 2, 3]})  # Example new mistakes
-# dataset_tracker.update_mistakes(df_new_mistakes)
-# sample_with_mistakes = dataset_tracker.get_sample(10)
+# dataset_mistake_tracker.update_mistakes(df_new_mistakes)
+# sample_with_mistakes = dataset_mistake_tracker.get_sample(10)

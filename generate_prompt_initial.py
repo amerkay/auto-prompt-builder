@@ -1,7 +1,7 @@
 from langchain.schema.output_parser import StrOutputParser
 from langchain.callbacks import get_openai_callback
 
-from utils import save_tmp_file, extract_prompt_from_answer, replace_percent_variables, print_cost
+from utils import save_log_file, extract_prompt_from_answer, replace_percent_variables, print_cost
 from utils_multiline_table import df_to_multiline_table
 
 from prompts.writep_few_shot.prompt import (
@@ -60,7 +60,7 @@ class GeneratePromptInitial:
         # Define the file prefix
         file_prefix = f"02-plan-{self.plan_id}-prompt_init"
 
-        save_tmp_file(f"{file_prefix}-(1).md", prompt_formatted)
+        save_log_file(f"{file_prefix}-(1).md", prompt_formatted)
 
         # Invoke the LangChain chain to generate the prompt
         answer = None
@@ -68,7 +68,7 @@ class GeneratePromptInitial:
             answer = self.get_chain().invoke(variables)
             print_cost(cb)
 
-        save_tmp_file(f"{file_prefix}-(2)-response.md", answer)
+        save_log_file(f"{file_prefix}-(2)-response.md", answer)
 
         # Extract the generated prompt
         prompt_generated_str = extract_prompt_from_answer(answer)

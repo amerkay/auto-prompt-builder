@@ -6,7 +6,7 @@ from langchain.output_parsers import PydanticOutputParser
 from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain.callbacks import get_openai_callback
 
-from utils import save_tmp_file, print_cost
+from utils import save_log_file, print_cost
 from utils_multiline_table import df_to_multiline_table
 from prompts.expert_plans.prompt import get_prompt_template
 
@@ -49,7 +49,7 @@ class GenerateExpertPlans:
         output_parser_str = StrOutputParser()
         prompt_formatted = self.prompt_template.format(**variables)
 
-        save_tmp_file(f"{file_prefix}-(1).md", prompt_formatted)
+        save_log_file(f"{file_prefix}-(1).md", prompt_formatted)
 
         # Invoke the LangChain chain to generate the prompt
         print("Generating 5 ranked ToT prompt construction plans...")
@@ -58,11 +58,11 @@ class GenerateExpertPlans:
             print_cost(cb)
 
         answer_str = output_parser_str.parse(answer.content)
-        save_tmp_file(f"{file_prefix}-(2)-response.md", answer_str)
+        save_log_file(f"{file_prefix}-(2)-response.md", answer_str)
 
         # Parse response
         answer_obj = output_parser.parse(answer.content)
-        save_tmp_file(f"{file_prefix}-(3)-parsed.md", answer_obj.to_json())
+        save_log_file(f"{file_prefix}-(3)-parsed.md", answer_obj.to_json())
 
         return self.reorder_plans(
             answer_obj.expert_prompt_plans, answer_obj.ranked_plans

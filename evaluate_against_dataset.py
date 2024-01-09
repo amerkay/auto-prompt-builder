@@ -1,7 +1,7 @@
 import pandas as pd
 import concurrent.futures
 from langchain.schema.output_parser import StrOutputParser
-from utils import save_tmp_file
+from utils import save_log_file
 from utils_multiline_table import df_to_multiline_table, parse_multiline_table
 from data_handling import chunk_dataframe, get_input_columns, get_output_column_name
 from langchain_core.prompts import PromptTemplate
@@ -226,7 +226,7 @@ class EvaluateAgainstDataset:
         prompt_formatted = self.prompt_template.format(
             input_table=df_to_multiline_table(chunk, is_remove_output_field=True)
         )
-        save_tmp_file(
+        save_log_file(
             f"{file_prefix}-(1)-request.md",
             prompt_formatted,
         )
@@ -240,7 +240,7 @@ class EvaluateAgainstDataset:
                 + retry_spaces
             }
         )
-        save_tmp_file(
+        save_log_file(
             f"{file_prefix}-(2)-response.md",
             answer_prompt_gen_chunk,
         )

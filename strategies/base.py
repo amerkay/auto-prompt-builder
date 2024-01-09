@@ -3,7 +3,7 @@ from previous_attempts import PreviousAttempts, Attempt
 from evaluate_against_dataset import EvaluateAgainstDataset
 from generate_prompt_initial import GeneratePromptInitial
 from generate_prompt_update import GeneratePromptUpdate
-from eval_aware_dataset import EvalAwareDataset
+from dataset_mistake_tracking import DatasetMistakeTracking
 from data_handling import get_df_incorrect_answers
 from generate_expert_plans import GenerateExpertPlans
 from best_prompt import BestPrompt
@@ -62,7 +62,7 @@ class BaseStrategy:
         self.rows_initial = rows_initial
         self.rows_max = rows_max
         self.rows_incorrect = rows_incorrect
-        self.dataset_tracker = EvalAwareDataset(df_original)
+        self.dataset_mistake_tracker = DatasetMistakeTracking(df_original)
         self.is_use_eval_aware_dataset = is_use_eval_aware_dataset
 
         self._init_evaluator()
@@ -111,7 +111,7 @@ class BaseStrategy:
         """
         plan_text = plan.to_string(idea_seed=self.idea_seed)
 
-        df_sample = self.dataset_tracker.get_sample(
+        df_sample = self.dataset_mistake_tracker.get_sample(
             self.rows_initial, is_include_mistakes=self.is_use_eval_aware_dataset
         )
         gen_prompt_initial = GeneratePromptInitial(
@@ -159,7 +159,7 @@ class BaseStrategy:
 
         # Update the mistakes
         df_incorrect = get_df_incorrect_answers(df_generated)
-        self.dataset_tracker.update_mistakes(df_incorrect)
+        self.dataset_mistake_tracker.update_mistakes(df_incorrect)
 
     def _generate_expert_plans(self):
         """
@@ -170,7 +170,7 @@ class BaseStrategy:
         """
         gen_expert_plans = GenerateExpertPlans(
             model=self.model_prompt_writer,
-            df_sample=self.dataset_tracker.get_sample(
+            df_sample=self.dataset_mistake_tracker.get_sample(
                 self.rows_initial, is_include_mistakes=self.is_use_eval_aware_dataset
             ),
             idea_seed=self.idea_seed,
