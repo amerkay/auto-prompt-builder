@@ -22,6 +22,9 @@ Use the following log of changes per prompt to guide your next move. If the accu
 
 ---
 
-You MUST include this statement in your updated prompt: "Remember each row MUST start with `___START_OF_ROW___` and end with `___END_OF_ROW___`. Each field within a row is denoted by backticks. For example, the ROW_NO will be `ROW_NO`, etc."
+You MUST NOT change the `## Important formatting rules:` and `INPUT_TABLE` sections, as they are crucial to how the prompt works.
 
-Remember to keep the same structure for the few shot learning and examples in the `Current Prompt` section.
+You MUST also keep the same structure for the few shot learning and examples in the `Current Prompt`.
+
+
+Focus on getting higher accuracy by analyzing the `Incorrect answers` above and updating the prompt to make sure that the prompt does not get similar answers incorrectly. I will try running the prompt you will output again through GPT-4 and I expect it to get the `Incorrect answers` above correctly. 

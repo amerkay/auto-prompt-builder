@@ -96,7 +96,6 @@ class GeneratePromptUpdate:
         save_tmp_file(f"{file_prefix}-(4)-changes-made.md", changes_made_str)
 
         # print(f"\n\n>> prompt_updated_str is:", prompt_updated_str)
-
         return prompt_updated_str, changes_made_str
 
     def get_incorrect_answers(self, df_generated):

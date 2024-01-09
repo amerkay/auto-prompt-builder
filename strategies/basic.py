@@ -1,7 +1,7 @@
 from strategies.base import BaseStrategy
 
 
-class BasicMemoryStrategy(BaseStrategy):
+class BasicStrategy(BaseStrategy):
     """
     ExpertPlanMemoryStrategy is a class that extends SequentialStrategy to focus on
     utilizing expert plans more effectively, particularly by implementing a two-run
@@ -11,9 +11,6 @@ class BasicMemoryStrategy(BaseStrategy):
     def _run_all_plans(self, ranked_expert_plans):
         """
         Runs a single iteration of the strategy.
-
-        Args:
-            ranked_expert_plans (list): A list of ranked expert plans.
 
         Returns:
             float: The accuracy achieved in the single run.
@@ -49,8 +46,8 @@ class BasicMemoryStrategy(BaseStrategy):
         # First Run: Initial prompt generation for each expert plan
         accuracy = self._run_all_plans(ranked_expert_plans)
 
-        # Second Run: Now with EvalAwareDataset knowing the hardest rows
+        # Second Run: Generate prompts for the hardest rows of the dataset
         if accuracy < self.goal_accuracy:
-            self._run_all_plans(ranked_expert_plans)
+            accuracy = self._run_all_plans(ranked_expert_plans)
 
         return self.best_prompt.get_best_prompt()

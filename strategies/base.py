@@ -141,31 +141,6 @@ class BaseStrategy:
         )
         return df_generated, accuracy
 
-    def _update_prompt(self, df_generated, prompt_previous, plan_text, plan_id):
-        """
-        Updates the prompt based on previous attempts and the current state of the dataset.
-
-        Args:
-            df_generated (pandas.DataFrame): The dataframe generated from the last prompt evaluation.
-            prompt_previous (str): The previous prompt string.
-            plan_text (str): The text representation of the current expert plan.
-            plan_id (int): The ID of the plan.
-
-        Returns:
-            tuple: A tuple containing the updated prompt string and the changes made.
-        """
-        gen_prompt_update = GeneratePromptUpdate(
-            model=self.model_prompt_writer,
-            attempt_no=self.attempt_no,
-            idea_seed=plan_text,
-            previous_attempts=self.previous_attempts,
-            max_rows_incorrect=self.rows_incorrect,
-            plan_id=plan_id,
-        )
-        return gen_prompt_update.invoke_with_retry(
-            df_generated=df_generated, prompt_previous=prompt_previous
-        )
-
     def _log_attempt(self, accuracy, prompt_str, plan, df_generated):
         """
         Logs each attempt, including the attempt number, accuracy, and changes made.
@@ -202,49 +177,80 @@ class BaseStrategy:
         )
         return gen_expert_plans.invoke()
 
-    def _run_update_prompt_loop(self, plan, accuracy, prompt_str, df_generated):
+    def _update_prompt(self, df_generated, prompt_previous, plan):
+        """
+        Updates the prompt based on previous attempts and the current state of the dataset.
+
+        Args:
+            df_generated (pandas.DataFrame): The dataframe generated from the last prompt evaluation.
+            prompt_previous (str): The previous prompt string.
+            plan (Plan): The plan object.
+
+        Returns:
+            float: The accuracy achieved in this attempt.
+        """
+        self.attempt_no += 1
+        plan_text = plan.to_string(idea_seed=self.idea_seed)
+
+        # Generate the updated prompt
+        gen_prompt_update = GeneratePromptUpdate(
+            model=self.model_prompt_writer,
+            attempt_no=self.attempt_no,
+            idea_seed=plan_text,
+            previous_attempts=self.previous_attempts,
+            max_rows_incorrect=self.rows_incorrect,
+            plan_id=plan.id,
+        )
+        # Invoke the LangChain chain to update the prompt
+        prompt_str, changes_made_str = gen_prompt_update.invoke_with_retry(
+            df_generated=df_generated, prompt_previous=prompt_previous
+        )
+
+        # Evaluate the updated prompt
+        df_generated, accuracy = self._evaluate_prompt(prompt_str, plan.id)
+
+        # Add attempt to previous attempts
+        self.previous_attempts.add(Attempt(self.attempt_no, accuracy, changes_made_str))
+
+        self._log_attempt(accuracy, prompt_str, plan, df_generated)
+
+        print("\n---\n" + self.previous_attempts.to_string() + "---\n")
+
+        return accuracy
+
+    def _run_update_prompt_loop(
+        self, plan, previous_accuracy, prompt_str, df_generated
+    ):
         """
         Runs the update prompt loop to auto-magically improve the prompt until it
         reaches the goal accuracy or the maximum number of attempts is reached.
 
         Args:
             plan (Plan): The plan object.
-            accuracy (float): The initial accuracy of the prompt.
+            previous_accuracy (float): The previous accuracy of the prompt.
             prompt_str (str): The initial prompt string.
             df_generated (DataFrame): The generated data.
 
         Returns:
             float: The final accuracy of the prompt.
         """
-        plan_text = plan.to_string(idea_seed=self.idea_seed)
+        accuracy = previous_accuracy
 
         while (
             accuracy < self.goal_accuracy
             and self.attempt_no < self.max_attempts_per_plan
         ):
-            self.attempt_no += 1
-            prompt_str, changes_made_str = self._update_prompt(
-                df_generated, prompt_str, plan_text, plan.id
-            )
-            df_generated, accuracy = self._evaluate_prompt(prompt_str, plan.id)
-
-            # Add attempt to previous attempts
-            self.previous_attempts.add(
-                Attempt(self.attempt_no, accuracy, changes_made_str)
-            )
-
-            self._log_attempt(accuracy, prompt_str, plan, df_generated)
-
-            print("\n---\n" + self.previous_attempts.to_string() + "---\n")
+            accuracy = self._update_prompt(df_generated, prompt_str, plan)
 
         return accuracy
 
-    def _run_plan_initial_prompt(self, plan):
+    def _run_plan_initial_prompt(self, plan, mutation=0):
         # Initiate the previous attempts list for this plan
         self._init_previous_attempts()
 
         # The plan
-        plan_text = plan.to_string(idea_seed=self.idea_seed)
+        mutation_spaces = " " * mutation
+        plan_text = plan.to_string(idea_seed=self.idea_seed) + mutation_spaces
         print(f"\n==============\n==============\n\nPlan {plan.id}:\n{plan_text}\n")
 
         # Generate the initial prompt for this plan
