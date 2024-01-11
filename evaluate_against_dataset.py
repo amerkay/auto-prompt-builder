@@ -73,9 +73,9 @@ class EvaluateAgainstDataset:
             )
 
         # Calculate the accuracy
-        accuracy = df_generated["Is Correct?"].sum() / len(df_generated) * 100
+        accuracy = int(df_generated["Is Correct?"].sum() / len(df_generated) * 100)
 
-        return int(accuracy), df_generated
+        return accuracy, df_generated
 
     def add_input_columns_to_df(self, df_original, df_generated, input_columns):
         """

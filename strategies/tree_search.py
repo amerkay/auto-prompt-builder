@@ -45,14 +45,14 @@ class TreeSearchStrategy(BaseStrategy):
         if accuracy < min_acceptable_accuracy:
             print(
                 f">>> Accuracy below min_acceptable_accuracy for plan {plan.id}"
-                f", mutation {mutation} is {accuracy}%. Next!"
+                f", mutation {mutation} at {accuracy}%. Next!"
             )
             return True
 
-        if accuracy <= previous_accuracy:
+        if accuracy < previous_accuracy:
             print(
-                f">>> Accuracy below or same as previous accuracy for plan {plan.id}"
-                f", mutation {mutation} is {accuracy}%. Next!"
+                f">>> Accuracy below previous accuracy for plan {plan.id}"
+                f", mutation {mutation} at {accuracy}%. Next!"
             )
             return True
 

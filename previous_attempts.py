@@ -1,6 +1,6 @@
 class Attempt:
     attempt_no: int
-    accuracy: float
+    accuracy: int
     changes_made: str
 
     def __init__(self, attempt_no, accuracy, changes_made):
