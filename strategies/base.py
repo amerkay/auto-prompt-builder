@@ -1,4 +1,3 @@
-from operator import is_
 from previous_attempts import PreviousAttempts, Attempt
 from evaluate_against_dataset import EvaluateAgainstDataset
 from generate_prompt_initial import GeneratePromptInitial
@@ -7,6 +6,7 @@ from dataset_mistake_tracking import DatasetMistakeTracking
 from data_handling import get_df_incorrect_answers
 from generate_expert_plans import GenerateExpertPlans
 from best_prompt import BestPrompt
+from utils_xml_table import slugify_column_names
 
 
 class BaseStrategy:
@@ -53,7 +53,7 @@ class BaseStrategy:
         """
         self.model_prompt_writer = model_prompt_writer
         self.model_evaluate = model_evaluate
-        self.df_original = df_original
+        self.df_original = slugify_column_names(df_original)
         self.idea_seed = idea_seed
         self.goal_accuracy = goal_accuracy
         self.max_attempts_per_plan = max_attempts_per_plan

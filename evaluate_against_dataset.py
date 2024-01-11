@@ -2,7 +2,7 @@ import pandas as pd
 import concurrent.futures
 from langchain.schema.output_parser import StrOutputParser
 from utils import save_log_file
-from utils_multiline_table import df_to_multiline_table, parse_multiline_table
+from utils_xml_table import df_to_xml_table, parse_xml_table
 from data_handling import chunk_dataframe, get_input_columns, get_output_column_name
 from langchain_core.prompts import PromptTemplate
 
@@ -75,7 +75,7 @@ class EvaluateAgainstDataset:
         # Calculate the accuracy
         accuracy = df_generated["Is Correct?"].sum() / len(df_generated) * 100
 
-        return accuracy, df_generated
+        return int(accuracy), df_generated
 
     def add_input_columns_to_df(self, df_original, df_generated, input_columns):
         """
@@ -223,29 +223,22 @@ class EvaluateAgainstDataset:
         )
 
         print(f"Getting chunk {j} retry {retry} with {len(chunk)} rows...", flush=True)
-        prompt_formatted = self.prompt_template.format(
-            input_table=df_to_multiline_table(chunk, is_remove_output_field=True)
-        )
-        save_log_file(
-            f"{file_prefix}-(1)-request.md",
-            prompt_formatted,
-        )
+        input_table_str = df_to_xml_table(chunk, is_remove_output_field=True)
+        prompt_formatted = self.prompt_template.format(input_table=input_table_str)
+        save_log_file(f"{file_prefix}-(1)-request.md", prompt_formatted)
 
         # spaces as many retry times
         retry_spaces = " " * retry
 
         answer_prompt_gen_chunk = self.get_chain().invoke(
-            {
-                "input_table": df_to_multiline_table(chunk, is_remove_output_field=True)
-                + retry_spaces
-            }
+            {"input_table": input_table_str + retry_spaces}
         )
         save_log_file(
             f"{file_prefix}-(2)-response.md",
             answer_prompt_gen_chunk,
         )
 
-        df_generated_chunk = parse_multiline_table(
+        df_generated_chunk = parse_xml_table(
             answer_prompt_gen_chunk, expected_count=len(chunk)
         )
 

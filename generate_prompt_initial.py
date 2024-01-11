@@ -2,7 +2,7 @@ from langchain.schema.output_parser import StrOutputParser
 from langchain.callbacks import get_openai_callback
 
 from utils import save_log_file, extract_prompt_from_answer, replace_percent_variables, print_cost
-from utils_multiline_table import df_to_multiline_table
+from utils_xml_table import df_to_xml_table
 
 from prompts.writep_few_shot.prompt import (
     get_prompt_template as get_few_shot_prompt_template,
@@ -49,7 +49,7 @@ class GeneratePromptInitial:
         """
 
         variables = {
-            "dataset_samples_table": df_to_multiline_table(self.df_sample),
+            "dataset_samples_table": df_to_xml_table(self.df_sample),
             "idea_seed": self.idea_seed,
         }
 

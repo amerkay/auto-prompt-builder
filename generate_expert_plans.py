@@ -7,7 +7,7 @@ from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain.callbacks import get_openai_callback
 
 from utils import save_log_file, print_cost
-from utils_multiline_table import df_to_multiline_table
+from utils_xml_table import df_to_xml_table
 from prompts.expert_plans.prompt import get_prompt_template
 
 
@@ -38,7 +38,7 @@ class GenerateExpertPlans:
 
     def invoke(self):
         variables = {
-            "dataset_samples_table": df_to_multiline_table(self.df_sample),
+            "dataset_samples_table": df_to_xml_table(self.df_sample),
             "idea_seed": self.idea_seed,
         }
 

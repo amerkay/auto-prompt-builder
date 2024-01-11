@@ -21,8 +21,8 @@ class SequentialStrategy(BaseStrategy):
 
         # Loop through each expert plan
         for i, plan in enumerate(ranked_expert_plans):
-            # if i > 2:
-            #     print(f"\n\n\nTEMP: Stopping because we've tried {i+1} plans already.")
+            # if i >= 1:
+            #     print(f"\n\n\nTEMP: Stopping because we've tried {i} plans already.")
             #     break
             #
             # if plan.id != 5:

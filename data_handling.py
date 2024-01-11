@@ -94,8 +94,10 @@ def get_df_incorrect_answers(df_generated):
     """
     # Filter df_generated to only include incorrect answers
     df_incorrect = df_generated[~df_generated["Is Correct?"]].reset_index(drop=True)
-    # Drop the column `Thinking step by step`, if it exists
-    if "Thinking step by step" in df_incorrect.columns:
-        df_incorrect = df_incorrect.drop(columns=["Thinking step by step"])
-
+    # Drop the column `Thinking_step_by_step`, if it exists
+    if "Thinking_step_by_step" in df_incorrect.columns:
+        df_incorrect = df_incorrect.drop(columns=["Thinking_step_by_step"])
+    else:
+        print("WARNING: No `Thinking_step_by_step` column found.")
+    
     return df_incorrect

@@ -4,9 +4,10 @@ from utils import (
     save_log_file,
     extract_prompt_from_answer,
     extract_changes_made_from_answer,
-    print_cost
+    print_cost,
+    replace_percent_variables
 )
-from utils_multiline_table import df_to_multiline_table
+from utils_xml_table import df_to_xml_table
 from langchain.schema.output_parser import StrOutputParser
 from prompts.updatep.prompt import get_prompt_template
 from langchain.callbacks import get_openai_callback
@@ -61,11 +62,14 @@ class GeneratePromptUpdate:
         # Get the incorrect answers from the generated data
         df_incorrect = self.get_incorrect_answers(df_generated)
 
+        # spaces as many retry times
+        retry_spaces = " " * retry
+
         variables = {
-            "current_prompt": prompt_previous,
-            "incorrect_answers_table": df_to_multiline_table(df_incorrect),
+            "current_prompt": prompt_previous.replace("{input_table}", "%%%INPUT_TABLE%%%"),
+            "incorrect_answers_table": df_to_xml_table(df_incorrect),
             "previous_attempts": self.previous_attempts.to_string(),
-            "idea_seed": self.idea_seed,
+            "idea_seed": self.idea_seed + retry_spaces,
         }
 
         # Invoke the LangChain chain to update the prompt
@@ -95,6 +99,8 @@ class GeneratePromptUpdate:
         changes_made_str = extract_changes_made_from_answer(answer)
         save_log_file(f"{file_prefix}-(4)-changes-made.md", changes_made_str)
 
+        prompt_updated_str = replace_percent_variables(prompt_updated_str)
+
         # print(f"\n\n>> prompt_updated_str is:", prompt_updated_str)
         return prompt_updated_str, changes_made_str
 
@@ -105,7 +111,7 @@ class GeneratePromptUpdate:
         print(f"Incorrect answers count: {len(df_incorrect)}")
 
         max_rows = self.max_rows_incorrect
-        if max_rows > len(df_incorrect):
+        if max_rows >= len(df_incorrect):
             max_rows = len(df_incorrect)
             print(f"Pick the first {max_rows} incorrect examples...")
             df_incorrect = df_incorrect.head(max_rows)

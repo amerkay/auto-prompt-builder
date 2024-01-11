@@ -2,11 +2,15 @@
 {idea_seed}
 
 
-# `DATASET_SAMPLES`
+# `table_dataset_samples`
+<table_dataset_samples>
 {dataset_samples_table}
+</table_dataset_samples>
 
 
-Remember each row MUST start with `___START_OF_ROW___` and end with `___END_OF_ROW___`. Each field within a row is denoted by backticks. For example, the ROW_NO will be `ROW_NO`, etc.
-
-DO NOT FORGET to denote the output field with `OUTPUT:`.
+The "Example `table_input`" you use in the prompt **MUST NEVER use rows from the `table_dataset_samples` provided**. You must make up new examples to guide GPT.
+The "Example `table_output`" MUST ALWAYS include the `Thinking_step_by_step` column.
+DO NOT FORGET that the output field starts `OUTPUT_` (OUTPUT_*).
 DO NOT FORGET to include the variable `%%%INPUT_TABLE%%%`.
+You MUST include the `Important formatting rules` section exactly like before.
+You MUST choose examples that will guide the LLM using few shot prompting.
